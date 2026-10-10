@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>psycBridge — Deck</title>
+<style>
+*{box-sizing:border-box}html,body{height:100%;margin:0}
+body{font-family:Inter,Segoe UI,Arial,sans-serif;background:#0f1226;color:#eef0ff;overflow:hidden}
+.slides{height:100vh;width:100vw;position:relative}
+.slide{position:absolute;inset:0;display:none;padding:6vh 7vw;flex-direction:column;justify-content:center}
+.slide.active{display:flex}
+h1{font-size:56px;margin:0 0 12px;line-height:1.05}
+h2{font-size:38px;margin:0 0 14px;color:#fff}
+p,li{font-size:22px;line-height:1.6;color:#c4c9ef}
+ul{margin:10px 0;padding-left:26px}
+.accent{background:linear-gradient(135deg,#7c6cff,#3ddc97);-webkit-background-clip:text;background-clip:text;color:transparent}
+.card{background:#191d3a;border:1px solid #2b3160;border-radius:18px;padding:22px 26px;margin-top:14px}
+.small{font-size:16px;color:#8f96c4}
+.bar{position:fixed;bottom:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:rgba(0,0,0,.35);font-size:15px;color:#a9afd6}
+button{background:#7c6cff;border:0;color:#fff;padding:10px 18px;border-radius:999px;font-size:16px;cursor:pointer;margin-left:8px}
+button.ghost{background:#242a5e}
+.flow{font-family:Consolas,monospace;background:#0d1130;border:1px dashed #3d4480;border-radius:14px;padding:14px 16px;margin-top:12px;font-size:18px;color:#d6dbff}
+b.w{color:#fff}
+.hint{position:fixed;top:12px;right:16px;font-size:14px;color:#8f96c4}
+</style>
+</head>
+<body>
+<div class="hint">Arrows / Space = next • F11 = fullscreen</div>
+<div class="slides">
+
+<div class="slide active">
+<div class="small">psycBridge • private help, perfect doctor</div>
+<h1>Help so private,<br><span class="accent">even family doesn't know.</span></h1>
+<p>Uber + Urban Company for psychiatrists & psychologists.<br>One-tap talk. File travels, user doesn't. Doctors free, no greed.</p>
+<div class="card"><p>Team: tech + psych student + business friend joining.<br>Ask today: feedback + 2 psychiatrists + 3 psychologists for pilot.</p></div>
+</div>
+
+<div class="slide">
+<h2>1. Problem</h2>
+<ul>
+<li>India comes <b class="w">late — beyond borderline</b>, often severe.</li>
+<li>ID + OTP + 10 questions = bounce when crying.</li>
+<li>5 famous docs full for months. 500 good juniors empty.</li>
+<li>Repeat same trauma story to every new doctor.</li>
+</ul>
+</div>
+
+<div class="slide">
+<h2>2. Talk Now — 3-year-old simple</h2>
+<ul>
+<li>Open → <b class="w">Talk Now</b> → nickname, no login, no OTP</li>
+<li>Human in ~3 min. 8-10 min free chat/audio.</li>
+<li>Docs ask only what THEY need. We force nothing.</li>
+</ul>
+<div class="flow">First relief = ~2 days. Real fix = follow-up sessions + meds.<br>We monetize follow-up, never first cry.</div>
+</div>
+
+<div class="slide">
+<h2>3. Graph — file travels</h2>
+<ul>
+<li>Each doc: circle of <b class="w">5-10 trusted peers</b> across fields.</li>
+<li>A: "friend will click better" → sends brief → B: <b class="w">Yes / No / Try C</b></li>
+<li>Silent slide A→B→C. Max 3 hops. User stays put.</li>
+<li>Off-app referral allowed. Network gets dense daily.</li>
+</ul>
+</div>
+
+<div class="slide">
+<h2>4. One owner always</h2>
+<div class="card"><p style="font-size:24px;color:#fff">Till case is given or surely passed,<br>it's his responsibility.</p>
+<p>Who holds file, owns patient. A owns till B + patient both say yes. Then B owns. No limbo, no parcel.</p></div>
+</div>
+
+<div class="slide">
+<h2>5. Less load, more earning</h2>
+<ul>
+<li>Seniors drowning → pass mild cases to juniors with space.</li>
+<li>Juniors get warm cases: <b class="w">"Dr. A sent you"</b> = instant trust.</li>
+<li>Seniors keep severe. Burnout drops, incomes even out.</li>
+</ul>
+</div>
+
+<div class="slide">
+<h2>6. Money — chanda first</h2>
+<ul>
+<li><b class="w">Phase 1:</b> direct UPI to doctor. Zero commission. Voluntary contribution for servers.</li>
+<li><b class="w">Phase 2:</b> small fee only after both sides love us.</li>
+<li>Neutral billing: PB WELLNESS. Neutral SMS: Reminder 7pm.</li>
+</ul>
+</div>
+
+<div class="slide">
+<h2>7. What we need</h2>
+<ul>
+<li>Validate 60-sec brief format with psych friend.</li>
+<li>5-6 volunteers for 7-11pm Talk Hours.</li>
+<li>50-user test in one college.</li>
+<li>Intros: 2 psychiatrists + 3 psychologists.</li>
+</ul>
+<div class="card"><p>psycBridge — <b class="w">Private for patients. Free for doctors.</b></p></div>
+</div>
+
+</div>
+<div class="bar">
+<div><span id="count">1 / 8</span> • Arrows to present</div>
+<div><button class="ghost" onclick="move(-1)">Back</button><button onclick="move(1)">Next</button></div>
+</div>
+<script>
+let i=0;const s=[...document.querySelectorAll('.slide')];const c=document.getElementById('count');
+function show(){s.forEach((e,k)=>e.classList.toggle('active',k===i));c.textContent=(i+1)+' / '+s.length}
+function move(d){i=(i+d+s.length)%s.length;show()}
+addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' '){move(1)}if(e.key==='ArrowLeft'){move(-1)}});
+show();
+</script>
+</body>
+</html>

@@ -1,115 +1,12 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>psycBridge Phase 1 — Talk Now test</title>
-<style>
-body{font-family:system-ui,Arial;margin:0;background:#0f1226;color:#eef0ff}
-.wrap{max-width:720px;margin:0 auto;padding:20px}
-.card{background:#191d3a;border:1px solid #2b3160;border-radius:14px;padding:16px;margin:12px 0}
-button{background:#7c6cff;border:0;color:#fff;padding:10px 16px;border-radius:999px;cursor:pointer;margin:4px}
-input,select{background:#0d1130;border:1px solid #3d4480;color:#fff;padding:8px 10px;border-radius:10px;margin:4px}
-#log{background:#0d1130;border:1px dashed #3d4480;border-radius:10px;padding:10px;font-family:monospace;white-space:pre-wrap;min-height:120px}
-.msg{border-bottom:1px solid #2b3160;padding:6px 0}
-.small{color:#8f96c4;font-size:13px}
-</style>
-</head>
-<body>
-<div class="wrap">
-<h1>psycBridge — Phase 1 test UI</h1>
-<p class="small">Talk Now only. No login, no payments. Backend: <span id="api">http://localhost:3001</span></p>
-
-<div class="card">
-<h3>1. Talk Now join</h3>
-<input id="nick" placeholder="nickname (auto if empty)">
-<select id="lang"><option value="hi">hi</option><option value="en">en</option></select>
-<button onclick="join()">Talk Now</button>
-<div id="joinOut" class="small"></div>
-</div>
-
-<div class="card">
-<h3>2. Triage (skippable)</h3>
-<button onclick="triage('yes')">Feeling unsafe: Yes (SOS)</button>
-<button onclick="triage('no')">No</button>
-<button onclick="triage('skip')">Skip</button>
-<div id="triageOut" class="small"></div>
-</div>
-
-<div class="card">
-<h3>3. Listener accept (test button — simulates volunteer)</h3>
-<button onclick="accept()">Accept as listener-1</button>
-<div id="sessOut" class="small"></div>
-</div>
-
-<div class="card">
-<h3>4. Chat (polling every 2s)</h3>
-<input id="chatIn" placeholder="type as seeker..." style="width:60%">
-<button onclick="send('seeker')">Send seeker</button>
-<button onclick="send('listener')">Send listener</button>
-<div id="chat"></div>
-</div>
-
-<div class="card">
-<h3>5. End + vote</h3>
-<button onclick="endSes(true)">👍 helped</button>
-<button onclick="endSes(false)">👎 not</button>
-<div id="endOut" class="small"></div>
-</div>
-
-<div class="card"><h3>Log</h3><div id="log"></div></div>
-</div>
-
-<script>
-const API = "http://localhost:3001/api/v1";
-let case_id = null, session_id = null;
-const device_uuid = "browser-" + Math.random().toString(36).slice(2,9);
-function log(o){ document.getElementById("log").textContent += (typeof o==="string"?o:JSON.stringify(o,null,2)) + "\n"; }
-
-async function join(){
-  const nickname = document.getElementById("nick").value || undefined;
-  const lang = document.getElementById("lang").value;
-  const r = await fetch(API+"/talk-now/join",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({device_uuid,nickname,lang})});
-  const j = await r.json(); log(j);
-  if(r.ok){ case_id=j.case_id; document.getElementById("joinOut").textContent = `case ${case_id} pos #${j.position} eta ${j.eta_min}m hours_open=${j.hours_open}`; pollStatus(); }
-}
-async function pollStatus(){
-  if(!case_id) return;
-  const r = await fetch(API+"/talk-now/status?case_id="+case_id); const j = await r.json();
-  document.getElementById("joinOut").textContent = `status=${j.status} pos #${j.position} eta ${j.eta_min}m session=${j.session_id||"none"}`;
-  if(j.session_id && !session_id){ session_id=j.session_id; startPoll(); }
-}
-setInterval(()=>{ if(case_id && !session_id) pollStatus(); }, 3000);
-
-async function triage(v){
-  if(!case_id) return alert("join first");
-  const r = await fetch(API+"/talk-now/triage",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({case_id,unsafe_self:v})});
-  const j = await r.json(); log(j);
-  document.getElementById("triageOut").textContent = "action=" + j.action;
-}
-async function accept(){
-  if(!case_id) return alert("join first");
-  const r = await fetch(API+"/talk-now/accept",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({case_id,listener_id:"listener-1"})});
-  const j = await r.json(); log(j);
-  if(r.ok){ session_id=j.session_id; document.getElementById("sessOut").textContent = "session "+session_id; startPoll(); }
-}
-let poller=null;
-function startPoll(){ if(poller) return; poller=setInterval(refresh,2000); refresh(); }
-async function refresh(){
-  if(!session_id) return;
-  const r = await fetch(API+"/session/"+session_id+"/messages"); const j = await r.json();
-  document.getElementById("chat").innerHTML = (j.messages||[]).map(m=>`<div class="msg"><b>${m.sender}:</b> ${m.body}</div>`).join("");
-}
-async function send(who){
-  const body = document.getElementById("chatIn").value; if(!body) return;
-  const r = await fetch(API+"/session/"+session_id+"/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({sender:who,body})});
-  log(await r.json()); document.getElementById("chatIn").value=""; refresh();
-}
-async function endSes(v){
-  const r = await fetch(API+"/sessions/"+session_id+"/end",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({helped_vote:v})});
-  const j = await r.json(); log(j);
-  document.getElementById("endOut").textContent = JSON.stringify(j);
-}
-</script>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PB Wellness — Talk Now</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>

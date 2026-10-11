@@ -1,6 +1,6 @@
 // Phase 1 config. All tunables in one place.
 module.exports = {
-  port: process.env.PORT || 3001,
+  port: process.env.PORT || 3000,
   talkHours: { start: 19, end: 23, tz: "Asia/Kolkata" }, // 7-11pm IST
   freeWindowSec: 24 * 3600,      // 1 free session / device / 24h
   sessionMaxMin: 10,             // hard close at 10 min

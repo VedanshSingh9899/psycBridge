@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PB Wellness — Talk Now</title>
+<style>
+*{box-sizing:border-box}
+body{font-family:system-ui,-apple-system,Segoe UI,Arial;margin:0;background:#0f1226;color:#eef0ff}
+.wrap{max-width:560px;margin:0 auto;padding:16px 14px 60px}
+.top{display:flex;align-items:center;justify-content:space-between;padding:10px 2px}
+.brand{font-weight:800;font-size:18px}
+.brand span{color:#3ddc97}
+.hours{font-size:12px;background:#242a5e;padding:6px 12px;border-radius:999px;color:#d6dbff}
+.tabs{display:flex;gap:8px;margin:12px 0}
+.tabs button{flex:1;padding:12px;border-radius:12px;border:1px solid #2b3160;background:#191d3a;color:#c4c9ef;font-size:15px;cursor:pointer}
+.tabs button.on{background:#7c6cff;color:#fff;border-color:#7c6cff;font-weight:700}
+.card{background:#191d3a;border:1px solid #2b3160;border-radius:18px;padding:18px;margin:12px 0}
+.big{width:100%;padding:20px;font-size:22px;font-weight:800;border-radius:16px;border:0;background:linear-gradient(135deg,#7c6cff,#3ddc97);color:#0d0f22;cursor:pointer}
+.big:active{transform:scale(.98)}
+.ghost{width:100%;padding:12px;border-radius:12px;background:#242a5e;color:#fff;border:0;margin-top:8px;cursor:pointer;font-size:15px}
+.row{display:flex;gap:8px;margin-top:10px}
+.row input,.row select{flex:1;background:#0d1130;border:1px solid #3d4480;color:#fff;padding:12px;border-radius:12px;font-size:15px}
+.chip{padding:10px 14px;border-radius:999px;border:1px solid #3d4480;background:#0d1130;color:#fff;cursor:pointer;font-size:14px;margin:4px}
+.chip.yes{border-color:#ff6b6b}
+.waitbox{text-align:center;padding:14px}
+.waitbox .n{font-size:40px}
+.human{font-size:16px;color:#d6dbff;margin:8px 0}
+#chatBox{max-height:300px;overflow-y:auto;margin:10px 0;display:flex;flex-direction:column;gap:6px}
+.bubble{max-width:80%;padding:10px 12px;border-radius:14px;font-size:15px;line-height:1.4}
+.me{align-self:flex-end;background:#7c6cff;color:#fff}
+.them{align-self:flex-start;background:#242a5e;color:#eef0ff}
+.chatrow{display:flex;gap:8px}
+.chatrow input{flex:1;background:#0d1130;border:1px solid #3d4480;color:#fff;padding:12px;border-radius:12px}
+.chatrow button{background:#3ddc97;border:0;border-radius:12px;padding:0 18px;font-size:18px;cursor:pointer}
+.timer{text-align:center;font-size:13px;color:#8f96c4}
+.sos{background:#3a1520;border:1px solid #ff6b6b;border-radius:14px;padding:14px;margin:12px 0}
+.sos b{color:#ff8f8f}
+.small{color:#8f96c4;font-size:13px;line-height:1.5}
+.hide{display:none}
+.vote{display:flex;gap:8px}
+.vote button{flex:1;padding:14px;font-size:18px;border-radius:12px;border:0;cursor:pointer}
+.opt{display:block;width:100%;text-align:left;background:#0d1130;border:1px solid #3d4480;color:#fff;padding:12px;border-radius:12px;margin:6px 0;cursor:pointer;font-size:14px}
+.qcard{background:#0d1130;border:1px dashed #3d4480;border-radius:12px;padding:10px;margin-top:10px;font-size:13px;color:#a9afd6}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand">PB <span>Wellness</span></div>
+    <div class="hours" id="hoursBadge">Talk Hours 7–11pm</div>
+  </div>
+
+  <div class="tabs">
+    <button id="tabSeeker" class="on" onclick="showTab('seeker')">Need Help</button>
+    <button id="tabListener" onclick="showTab('listener')">I'm a Listener</button>
+  </div>
+
+  <!-- SEEKER -->
+  <div id="viewSeeker">
+    <div class="card" id="stepJoin">
+      <h2 style="margin:0 0 6px">Someone is waiting for you.</h2>
+      <p class="small">No login. No OTP. No name needed. Just tap below and talk for 8–10 min, free.</p>
+      <button class="big" onclick="join()">Talk Now</button>
+      <div class="row">
+        <input id="nick" placeholder="Nickname (auto)">
+        <select id="lang"><option value="hi">हिंदी</option><option value="en">English</option></select>
+      </div>
+      <p class="small">Private: alias only, in-app chat, nothing on call log. <a href="#" onclick="sos(event)" style="color:#ff8f8f">Emergency? SOS</a></p>
+    </div>
+
+    <div class="card hide" id="stepTriage">
+      <h3 style="margin:0 0 8px">Quick check (you can skip)</h3>
+      <p class="small">Are you feeling unsafe with yourself right now?</p>
+      <button class="chip yes" onclick="triage('yes')">Yes</button>
+      <button class="chip" onclick="triage('no')">No</button>
+      <button class="chip" onclick="triage('skip')">Skip →</button>
+    </div>
+
+    <div class="card hide" id="stepQueue">
+      <div class="waitbox">
+        <div class="n">💬</div>
+        <div class="human" id="queueText">Finding someone…</div>
+        <div class="small" id="queueSub"></div>
+        <button class="ghost" onclick="cancelQ()">Book for later instead</button>
+      </div>
+    </div>
+
+    <div class="card hide" id="stepChat">
+      <div class="timer" id="timer">8 min left</div>
+      <div id="chatBox"></div>
+      <div class="chatrow">
+        <input id="chatIn" placeholder="Type here…" onkeydown="if(event.key==='Enter')sendSeeker()">
+        <button onclick="sendSeeker()">➤</button>
+      </div>
+      <button class="ghost" onclick="endSes(true)">End chat</button>
+    </div>
+
+    <div class="card hide" id="stepDone">
+      <h3 style="margin:0 0 8px">Did this help a little?</h3>
+      <div class="vote">
+        <button style="background:#3ddc97" onclick="vote(true)">👍 Yes</button>
+        <button style="background:#242a5e;color:#fff" onclick="vote(false)">👎 Not really</button>
+      </div>
+      <button class="opt" onclick="alert('Reminder set (demo). Real SMS comes in Phase 2.')">⏰ Remind me tomorrow 7pm (optional)</button>
+      <button class="opt" onclick="alert('Account save comes after pilot. Nothing needed now.')">💾 Save this chat (optional)</button>
+      <button class="opt" onclick="resetAll()">🔄 Talk again / new session</button>
+    </div>
+
+    <div class="sos hide" id="sosBox">
+      <b>You matter. Get human help now:</b>
+      <p>📞 Partner Helpline: <b>1800-XXX-XXXX</b> (24x7)<br>
+      A supervised listener has been paged. Stay on this screen.</p>
+      <button class="ghost" onclick="resetAll()">Back to Talk Now</button>
+    </div>
+  </div>
+
+  <!-- LISTENER -->
+  <div id="viewListener" class="hide">
+    <div class="card">
+      <h3 style="margin:0 0 6px">Volunteer desk (7–11pm)</h3>
+      <p class="small">1. Go Available → 2. Accept next person → 3. Chat 8–10 min → 4. End.</p>
+      <div class="row">
+        <input id="listenerId" value="listener-1">
+        <button class="chip" onclick="goAvail()">Go Available</button>
+      </div>
+      <div class="small" id="deskInfo">Queue: ? • Online: ?</div>
+      <button class="big" style="font-size:17px" onclick="acceptNext()">Accept next person</button>
+      <div class="small" id="deskSess"></div>
+    </div>
+    <div class="card">
+      <div id="chatBoxL"></div>
+      <div class="chatrow">
+        <input id="chatInL" placeholder="Reply as listener…" onkeydown="if(event.key==='Enter')sendListener()">
+        <button onclick="sendListener()">➤</button>
+      </div>
+      <button class="ghost" onclick="endSesL()">End session</button>
+    </div>
+  </div>
+
+  <div class="qcard">Phase 1 pilot • Free first chat only • No payments • Alias mode • Chats auto-delete in 48h • Backend: <span id="apiLbl"></span></div>
+</div>
+
+<script>
+const API = "http://localhost:3000/api/v1";
+document.getElementById("apiLbl").textContent = API;
+const device_uuid = "browser-" + Math.random().toString(36).slice(2,9);
+let case_id=null, session_id=null, qTimer=null, cTimer=null, startTs=null;
+
+function show(id){ document.getElementById(id).classList.remove("hide"); }
+function hide(id){ document.getElementById(id).classList.add("hide"); }
+function showTab(t){
+  document.getElementById("tabSeeker").classList.toggle("on", t==="seeker");
+  document.getElementById("tabListener").classList.toggle("on", t==="listener");
+  document.getElementById("viewSeeker").classList.toggle("hide", t!=="seeker");
+  document.getElementById("viewListener").classList.toggle("hide", t!=="listener");
+}
+
+// ---- SEEKER ----
+async function join(){
+  const nickname = document.getElementById("nick").value || undefined;
+  const lang = document.getElementById("lang").value;
+  const r = await fetch(API+"/talk-now/join",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({device_uuid,nickname,lang})});
+  const j = await r.json();
+  if(!r.ok){ alert(j.code==="FREE_LIMIT" ? `One free chat per day. Try again in ${Math.ceil(j.retry_after_sec/3600)}h.` : j.message); return; }
+  case_id=j.case_id;
+  hide("stepJoin"); show("stepTriage");
+}
+async function triage(v){
+  await fetch(API+"/talk-now/triage",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({case_id,unsafe_self:v})}).then(r=>r.json()).then(j=>{
+    if(j.action==="sos"){ hide("stepTriage"); show("sosBox"); return; }
+    hide("stepTriage"); show("stepQueue"); pollQ();
+  });
+}
+async function pollQ(){
+  clearInterval(qTimer);
+  const tick = async ()=>{
+    const r = await fetch(API+"/talk-now/status?case_id="+case_id); const j = await r.json();
+    document.getElementById("queueText").textContent = `${j.online_count} listener(s) online • ~${j.eta_min} min wait`;
+    document.getElementById("queueSub").textContent = j.position ? `You are #${j.position} in line. Stay here, we will connect you.` : `Connecting…`;
+    if(j.hours_open===false) document.getElementById("queueSub").textContent += " (Outside 7–11pm, next slot soon)";
+    if(j.session_id){ clearInterval(qTimer); session_id=j.session_id; openChat(); }
+  };
+  qTimer=setInterval(tick,3000); tick();
+}
+function cancelQ(){ clearInterval(qTimer); alert("Noted. We will remind you at 7pm tomorrow (demo)."); }
+function openChat(){
+  hide("stepQueue"); show("stepChat"); startTs=Date.now();
+  clearInterval(cTimer); cTimer=setInterval(()=>{
+    const el=(Date.now()-startTs)/60000;
+    const left=Math.max(0,10-el);
+    document.getElementById("timer").textContent = el>=8 ? `Wrapping up… ${left.toFixed(0)} min left` : `${left.toFixed(0)} min left`;
+    refresh();
+  },2000); refresh();
+}
+async function refresh(){
+  if(!session_id) return;
+  const r = await fetch(API+"/session/"+session_id+"/messages"); const j = await r.json();
+  const box=document.getElementById("chatBox");
+  box.innerHTML=(j.messages||[]).map(m=>`<div class="bubble ${m.sender==="seeker"?"me":"them"}">${m.body}</div>`).join("");
+  box.scrollTop=box.scrollHeight;
+}
+async function sendSeeker(){
+  const inp=document.getElementById("chatIn"); if(!inp.value.trim()) return;
+  await fetch(API+"/session/"+session_id+"/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({sender:"seeker",body:inp.value})});
+  inp.value=""; refresh();
+}
+async function endSes(){
+  clearInterval(cTimer); clearInterval(qTimer);
+  await fetch(API+"/sessions/"+session_id+"/end",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({})});
+  hide("stepChat"); show("stepDone");
+}
+async function vote(v){
+  await fetch(API+"/sessions/"+session_id+"/end",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({helped_vote:v})});
+  alert(v ? "Glad it helped a little. Come back anytime 7–11pm." : "Thanks for telling us. Try a follow-up chat tomorrow.");
+}
+function resetAll(){ location.reload(); }
+function sos(e){ e.preventDefault(); hide("stepJoin"); show("sosBox"); }
+
+// ---- LISTENER ----
+async function goAvail(){
+  const id=document.getElementById("listenerId").value||"listener-1";
+  await fetch(API+"/availability",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({listener_id:id})});
+  const q=await fetch(API+"/coordinator/queue").then(r=>r.json());
+  document.getElementById("deskInfo").textContent=`Queue: ${q.queue_len} waiting • Online: ${q.online_listeners.join(",")||id}`;
+  setInterval(async()=>{
+    const qq=await fetch(API+"/coordinator/queue").then(r=>r.json());
+    document.getElementById("deskInfo").textContent=`Queue: ${qq.queue_len} waiting • Online: ${qq.online_listeners.join(",")}`;
+  },5000);
+}
+async function acceptNext(){
+  const id=document.getElementById("listenerId").value||"listener-1";
+  const q=await fetch(API+"/coordinator/queue").then(r=>r.json());
+  if(!q.cases.length){ alert("Nobody waiting right now. Stay Available."); return; }
+  const next=q.cases[0].id;
+  const r=await fetch(API+"/talk-now/accept",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({case_id:next,listener_id:id})});
+  const j=await r.json();
+  if(!r.ok){ alert(j.message); return; }
+  session_id=j.session_id;
+  document.getElementById("deskSess").textContent=`Talking to ${j.alias} (${j.lang})`;
+  setInterval(refreshL,2000); refreshL();
+}
+async function refreshL(){
+  if(!session_id) return;
+  const r=await fetch(API+"/session/"+session_id+"/messages"); const j=await r.json();
+  const box=document.getElementById("chatBoxL");
+  box.innerHTML=(j.messages||[]).map(m=>`<div class="bubble ${m.sender==="listener"?"me":"them"}"><b>${m.sender}:</b> ${m.body}</div>`).join("");
+}
+async function sendListener(){
+  const inp=document.getElementById("chatInL"); if(!inp.value.trim()||!session_id) return;
+  await fetch(API+"/session/"+session_id+"/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({sender:"listener",body:inp.value})});
+  inp.value=""; refreshL();
+}
+async function endSesL(){
+  if(!session_id) return;
+  await fetch(API+"/sessions/"+session_id+"/end",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({})});
+  alert("Session closed. Thanks for volunteering.");
+}
+</script>
+</body>
+</html>

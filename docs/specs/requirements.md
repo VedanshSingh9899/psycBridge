@@ -278,5 +278,4 @@ OUT / Phase 2:
 - Payments no-greed -> FR-36 to FR-39
 - Privacy -> FR-40 to FR-46
 - Safety/legal -> FR-47 to FR-50
-
 *Next SDLC step: Design (architecture, data model, API, Talk Now screen-by-screen flow). Do NOT code before closing Open Questions Sec 10.*

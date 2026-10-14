@@ -1,90 +1,36 @@
-# psycBridge
+# psycBridge — Private Help, Perfect Doctor
 
-> Start here. This file is the map for the whole repo. Click around via [INDEX.md](INDEX.md).
+> Uber + Urban Company for psychiatrists & psychologists in India. Privacy so deep, even family doesn't know if you don't want them to.
 
-## What is psycBridge?
+## The problem
 
-Uber / Urban-Company-style network for psychiatrists + psychologists in India,
-with privacy so deep even family doesn't know if the user wants that.
+- India seeks help late — often severe, not mild.
+- Stigma + family fear stop the first call. Photo ID, OTP, 10 questions = bounce.
+- 5 famous doctors overbooked for months. 500 good young psychologists sit empty.
+- Patient repeats trauma story to every new doctor. Referrals are cold — "go find him yourself."
 
-- **Seeker:** 1 tap `Talk Now` → anonymous alias → human in ~3 min. No login, no OTP, no 10-question form.
-- **Care graph:** file travels, user doesn't. Brief slides A → B → C (Yes / No / Suggest C), max 3 hops, single owner always.
-- **Money:** no paywall on first cry. Phase 1 = direct UPI, zero commission.
+## Our promise
 
-## Doc index
+1. **3-year-old simple:** one tap to talk. Free first try. If it helps, you'll come back.
+2. **Emotion first, data later:** doctors ask what they need, when you are comfortable. No forced forms.
+3. **File travels, user doesn't:** brief slides doctor-to-doctor till perfect fit. You stay with one anchor.
+4. **Doctors are free:** own fee, time, style. Can leave anytime. No trap.
+5. **No greed:** no paywall on first cry. Money goes to workers first.
 
-Start at **[INDEX.md](INDEX.md)** — every doc, clickable from one page.
+## How it works — for users
 
-| File | What | Who |
-|------|------|-----|
-| `INDEX.md` | hub — click through to every doc | everyone |
-| `README.md` (this file) | overview + where everything lives | everyone |
-| `docs/HOW-TO-RUN.md` | run backend + frontend locally in 5 min | anyone testing |
-| `docs/testing/testing-backend.md` | API tests + edge cases (copy-paste) | anyone testing |
-| `docs/testing/testing-frontend.md` | browser UI click-path + two-tab test | anyone testing |
-| `docs/testing/testing-checklist.md` | pilot exit criteria mapped to spec | anyone testing |
-| `docs/API.md` | Phase 1 endpoints, verified against code | backend / frontend |
-| `docs/SEED.md` | demo data + how to seed a test session | anyone demoing |
-| `docs/seed.demo.ps1` | one-click script: join → accept → chat → end | anyone demoing |
-| `docs/PHASES.md` | what's built (P1) vs placeholders (P2/P3) | new joiners |
+Open → Talk Now → nickname (no login) → human in ~3 min → 8-10 min free chat/audio → same person offers follow-up → book session if needed.
 
-## Specs, ideas & pitch (live in `docs/` subfolders)
+Alias always. Neutral reminders. You never get passed around — one owner always.
 
-| File | Phase | Content |
-|------|-------|---------|
-| `docs/specs/requirements.md` | SDLC-1 | FR-01…FR-53, NFR-01…NFR-11, pilot metrics |
-| `docs/specs/design.md` | SDLC-2 | module view, flows, queue/Redis design |
-| `docs/specs/DesignER.md` | SDLC-2 detailed | **wins on conflict** — full DDL, sequences, masking matrix, build checklist |
-| `docs/ideas/BRAINSTORM.md` | idea | original thesis |
-| `docs/ideas/notes2.md` | idea | founder notes, short version |
-| `docs/pitch/pitch.md` | pitch | problem → promise → ask |
-| `docs/pitch/pitch.html`, `docs/pitch/deck.html`, `docs/pitch/business-deck.html` | pitch | slide decks (open in browser) |
+## How it works — for doctors
 
-## Repo map
+Each doctor keeps a Circle of 5-10 trusted peers. If A feels "my friend will click better", A sends a brief, B says Yes / No / Suggest C. File slides A → B → C, max 3 hops. Who holds the file, owns the patient. No limbo.
 
-```
-psycBridge/
-├── INDEX.md, README.md      ← you are here (start at INDEX.md)
-├── docs/                    ← guides + testing + seed script
-│   ├── HOW-TO-RUN.md, API.md, SEED.md, PHASES.md, seed.demo.ps1
-│   ├── specs/               ← requirements.md, design.md, DesignER.md
-│   ├── ideas/               ← BRAINSTORM.md, notes2.md
-│   ├── pitch/               ← pitch.md + pitch/deck/business-deck .html
-│   └── testing/             ← testing-backend/frontend/checklist .md
-├── backend/               ← Phase 1 working code (Express, in-memory store, no DB)
-│   ├── src/index.js       ← boot
-│   ├── src/app.js         ← route wiring
-│   ├── src/config.js      ← all tunables (Talk Hours, limits)
-│   ├── src/common/store.js
-│   └── src/modules/talk-now/ + session/   ← built
-│       + graph/ + brief/ + booking/        ← placeholders (TODO.md only)
-├── frontend/
-│   └── index.html         ← Phase 1 test UI, no build step
-```
+This balances load: seniors pass mild cases to juniors with space, juniors get warm trusted cases, seniors keep severe cases.
 
-## Current state (honest)
+## Money + privacy
 
-- ✅ **Works:** anon join, 1-free/24h guard, queue + ETA, skippable triage + SOS path,
-  listener accept, polling chat, 10-min wrap/close config, end + 👍/👎 vote,
-  48h message burn, coordinator queue peek.
-- ❌ **Not built:** login/OTP, Postgres/Redis (in-memory Maps instead),
-  sockets/LiveKit audio, Circle/referral/brief/booking, payments, stealth app, coordinator dashboard.
+Phase 1: direct payment to doctor, zero commission. Fee only later, after both sides love us, and only on follow-up care — never on first cry.
 
-See `docs/PHASES.md` for the full built-vs-placeholder table.
-
-## Quickest demo (2 min)
-
-```powershell
-cd backend
-npm install
-npm run dev      # -> http://localhost:3001/api/v1/health
-```
-
-Then either open `frontend/index.html` in a browser,
-or run the seed script:
-
-```powershell
-powershell -ExecutionPolicy Bypass -File docs/seed.demo.ps1
-```
-
-Details → `docs/HOW-TO-RUN.md`. Endpoints → `docs/API.md`.
+Privacy: alias, in-app call only, stealth app, expiring chats, one-tap wipe, discreet billing.

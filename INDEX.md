@@ -8,6 +8,7 @@
 |------------|------|
 | Understand the project in 2 min | [README.md](README.md) |
 | Run it locally | [docs/HOW-TO-RUN.md](docs/HOW-TO-RUN.md) |
+| Run the Next.js UI (`web/`) | [web/README.md](web/README.md) |
 | Test the backend API | [docs/testing/testing-backend.md](docs/testing/testing-backend.md) |
 | Test the browser UI | [docs/testing/testing-frontend.md](docs/testing/testing-frontend.md) |
 | Check Phase 1 exit criteria | [docs/testing/testing-checklist.md](docs/testing/testing-checklist.md) |

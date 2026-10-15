@@ -1,36 +1,42 @@
-# Frontend — Phase 1 minimal React UI
+# Frontend — 3 links, 1 codebase (React + Vite)
 
 > Full docs: [`../INDEX.md`](../INDEX.md). API: [`../docs/API.md`](../docs/API.md).
 
-React + Vite, no router, no UI kit. Mirrors `legacy-test-ui.html` (the old
-single-file test UI, kept for reference).
+React + Vite, no router, no UI kit. Hostname decides the site:
+`localhost:5173` → seeker · `pro.localhost:5173` → listener desk ·
+`admin.localhost:5173` → coordinator. `?app=` overrides anywhere.
+
+`legacy-test-ui.html` is the old single-file test UI, kept for reference.
 
 ## Run
 
 ```powershell
 cd frontend
 npm install
-npm run dev      # -> http://localhost:5173
+npm run dev -- --host --port 5173
 ```
 
-Backend must be running (`cd backend; npm run dev`, default
-`http://localhost:3000/api/v1` — see `backend/src/config.js`).
+Faster: `docker compose up -d` at repo root (builds + serves via nginx).
 
-Point at another backend:
+Backend must be reachable (`http://localhost:3000/api/v1` by default —
+see `backend/src/config.js`).
+
+Point at another backend (local dev via `.env`, docker via build-arg):
 
 ```powershell
-# .env
-VITE_API_URL=http://localhost:3001/api/v1
+# frontend/.env
+VITE_API_URL=http://localhost:3000/api/v1
 ```
-
-(`.env.example` shows the default. Docs say `:3001`; code default is `:3000`
-unless `PORT` is set — either works via `VITE_API_URL`.)
 
 ## What it covers
 
-- Seeker: Talk Now → triage (yes/no/skip) → queue poll (3s, ETA/position) →
+- Seeker: Talk Now → triage (yes/no/skip) → queue poll (ETA/position) →
   chat poll (2s, 8/10-min timer) → end + 👍/👎 vote → SOS path.
-- Listener: Go Available → Accept next → chat → End.
+- Listener: OTP login (demo `123456`) → Available/Full/Paused → queue
+  (priority sort, greet context, Skip) → session (timer, wrap script, supervisor
+  ping, nudge, report) → after (follow-up booking, private notes) → My Clients,
+  Schedule, Today recap.
+- Admin: passcode gate → health → stuck table → warm assign/pings (audit-logged) → reports.
 - Footer shows the active backend base URL.
 
 Click-path: [`../docs/testing/testing-frontend.md`](../docs/testing/testing-frontend.md).
